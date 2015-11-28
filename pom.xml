@@ -91,7 +91,11 @@
                     <wtpversion>2.0</wtpversion>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.2.11.v20150529</version>
+            </plugin>
         </plugins>
     </build>
 
