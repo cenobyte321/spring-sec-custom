@@ -9,7 +9,10 @@ Todo en un contexto WEB
   Se requiere un mecanismo personalizado para validar las credenciales recibidas del formulario web.
   Esto se resuelve usando un:
 
+```java
   CustomAuthenticationProvider implements AuthenticationProvider 
+```
+
 
 ### Problema a resolver 2.
  Se requiere que el formulario de login permita ingresar 2 campos adicionales a:
