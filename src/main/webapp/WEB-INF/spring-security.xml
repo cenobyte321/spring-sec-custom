@@ -9,6 +9,7 @@
 
 
     <http auto-config="true">
+
         <intercept-url pattern="/admin**" access="ROLE_USER" />
 		
         <form-login 
@@ -16,22 +17,16 @@
             default-target-url="/welcome" 
             authentication-failure-url="/login?error" 
             username-parameter="username"
-            password-parameter="password" />
+            authentication-details-source-ref="customWebAuthenticationDetailsSource"
+            password-parameter="password"/>
         <logout logout-success-url="/login?logout"  />
         <!-- enable csrf protection -->
         <csrf/>
     </http>
-
-    <!--authentication-manager>
-        <authentication-provider>
-            <user-service>
-                <user name="admin" password="123456" authorities="ROLE_USER" />
-            </user-service>
-        </authentication-provider>
-    </authentication-manager-->
     <authentication-manager alias="authenticationManager">
-        <authentication-provider ref="customAuthenticationProvider" />
+        <authentication-provider ref="customAuthenticationProvider" >            
+        </authentication-provider>        
     </authentication-manager>
     <beans:bean id="customAuthenticationProvider" class="com.mkyong.web.controller.CustomAuthenticationProvider"/>
-    
+    <beans:bean id="customWebAuthenticationDetailsSource" class="org.codigoambar.seguridad.spring.extra.CustomWebAuthenticationDetailsSource"/>
 </beans:beans>

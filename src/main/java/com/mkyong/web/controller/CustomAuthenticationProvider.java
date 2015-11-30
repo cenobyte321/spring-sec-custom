@@ -17,6 +17,7 @@ package com.mkyong.web.controller;
 
 import java.util.List;
 import java.util.ArrayList;
+import org.codigoambar.seguridad.spring.extra.CustomWebAuthenticationDetails;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+
 /**
  *
  * @author rugi
@@ -36,6 +38,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String name = authentication.getName();
+
+        if (authentication.getDetails() instanceof CustomWebAuthenticationDetails) {
+            CustomWebAuthenticationDetails cwad = (CustomWebAuthenticationDetails) authentication.getDetails();
+            System.out.println("Sucursal............... :" + cwad.getSucursal());
+            System.out.println("Terminal/Caja.....:" + cwad.getCaja());
+        }
+
         String password = authentication.getCredentials().toString();
         if (name.equals("sys") && password.equals("123456")) {
             List grantedAuths = new ArrayList();
