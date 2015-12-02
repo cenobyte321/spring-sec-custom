@@ -1,5 +1,6 @@
-# spring-sec-custom
-Ejemplo de configuracion custom para SpringSecurity 3.2.8.RELEASE.
+# spring-sec-custom-boot
+
+Versión Spring Boot versión 1.3.0 de [https://github.com/rugi/spring-sec-custom](https://github.com/rugi/spring-sec-custom)
 
 ## Detalle.
 Este código muestra como resolver dos escenarios comunes al usar spring-security más allá del "out-of-the-box".
@@ -36,36 +37,41 @@ En escencia, lo que se hace es extender esta clase para permitirle contener los 
 
 Todo se ve mejor en el archivo de configuración de spring:
 
-```xml
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-             xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
-    
-    <http auto-config="true">
+```java
+@Configuration
+@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-        <intercept-url pattern="/admin**" access="ROLE_USER" />
-		
-        <form-login 
-            login-page="/login" 
-            default-target-url="/welcome" 
-            authentication-failure-url="/login?error" 
-            username-parameter="username"
-            authentication-details-source-ref="customWebAuthenticationDetailsSource"
-            password-parameter="password"/>
-        <logout logout-success-url="/login?logout"  />
-        <!-- enable csrf protection -->
-        <csrf/>
-    </http>
-    <authentication-manager alias="authenticationManager">
-        <authentication-provider ref="customAuthenticationProvider" >            
-        </authentication-provider>        
-    </authentication-manager>
-    <beans:bean id="customAuthenticationProvider" class="com.mkyong.web.controller.CustomAuthenticationProvider"/>
-    <beans:bean id="customWebAuthenticationDetailsSource" class="org.codigoambar.seguridad.spring.extra.CustomWebAuthenticationDetailsSource"/>
-</beans:beans>
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers("/admin**").hasRole("USER").and()
+        .formLogin()
+        .loginPage("/login")
+        .loginProcessingUrl("/j_spring_security_check")
+        .defaultSuccessUrl("/admin")
+        .failureUrl("/login?error")
+        .usernameParameter("username")
+        .passwordParameter("password")
+        .authenticationDetailsSource(customWebAuthenticationDetailsSource())
+        .and().logout().logoutSuccessUrl("/login?logout").logoutUrl("/j_spring_security_logout");
+
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(customAuthenticationProvider());
+    }
+
+    @Bean
+    public AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> customWebAuthenticationDetailsSource(){
+        return new CustomWebAuthenticationDetailsSource();
+    }
+
+    @Bean
+    public CustomAuthenticationProvider customAuthenticationProvider(){
+        return new CustomAuthenticationProvider();
+    }
+}
 
 ```
  
